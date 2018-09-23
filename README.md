@@ -153,7 +153,7 @@ kable(means, format = "markdown", align='c')
 |      0      | 0.8721038 |
 |      1      | 0.9516820 |
 
-Once again, we are dealing with Bernoulli random variables. *I{at least one more REBILL for a client in group i}=I\_i ~* *B**e**r**n**o**u**l**l**i*(*P*<sub>*i*</sub>), *i=0,1*. We can easily compute 99% confidence intervals as follows:
+Once again, we are dealing with Bernoulli random variables. *I{at least one more REBILL for a client in group i}=I\_i* ~ *Bernoulli*(*P*<sub>*i*</sub>), *i=0,1*. We can easily compute 99% confidence intervals as follows:
 
 ``` r
 N0=summary_transactions[1,6] %>% as.numeric()
