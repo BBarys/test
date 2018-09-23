@@ -284,7 +284,7 @@ char_rebill=
   inner_join(users, by="sample_id")
 ```
 
-If we would calculate a chargeback rate individually for each client we would get divisions by zero. Instead let's estimate chargeback rate for each group by dividing the mean number of CHARGEBACKSs, *C*<sub>*b**a**r*</sub>, by the mean number of REBILLs, *R*<sub>*b**a**r*</sub>:
+If we would calculate a chargeback rate individually for each client we would get divisions by zero. Instead let's estimate chargeback rate for each group by dividing the mean number of CHARGEBACKs, *C*<sub>*b**a**r*</sub>, by the mean number of REBILLs, *R*<sub>*b**a**r*</sub>:
 
 ``` r
 char_rebill_summary=
