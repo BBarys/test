@@ -1,8 +1,8 @@
 A/B Test Of Cancellation Method
 ================
 
-1. Approximate distribution between test and control groups
------------------------------------------------------------
+## 1. Approximate distribution between test and control groups
+
 
 All the `csv` files are in the same directory as the **R** project. This code uses `dplyr`, `knitr` and `ggplot2` packages. Import them and read the data using the `read.csv` function:
 
@@ -45,7 +45,7 @@ ggplot(summary_users, aes(as.factor(test_group), size_of_group))+
   labs(x="Test group", y="Number of Clients")+guides(fill=FALSE)
 ```
 
-![](https://github.com/BBarys/test/blob/master/unnamed-chunk-4-1.png)
+![](Report_files/figure-markdown_github/unnamed-chunk-4-1.png)
 
 We assume that assignment of each client to a particular group is independent Bernoulli random variable with probability *p* of a client being assigned to the test group. We know that *p=E\[X\]*, where *X~Bernoulli(p)*. An estimator of *E\[X\]* is the sample mean of *x*<sub>*i*</sub>'s, where *x*<sub>*i*</sub> is 1 if a client *i* is in the test group, and zero otherwise. This simply reduces to the proportion of clients who were assigned to the test group:
 
@@ -77,13 +77,13 @@ ci
 It looks like the clients where assigned to a particular group using the following algorithm:
 
 1.  Generate *U~Uniform(0,1)*;
-2.  If *U* ≤ 0.25, then assign client *i* to the test group. Otherwise assign control group.
+2.  If *U* ≤ 0.25, then assign client *i* to the test group. Otherwise assign to control group.
 
 Let's test this. With the null hypothesis that *p=0.25*, the alternative hypothesis that *p* ≠ 0.25, our test statistic is:
 
 ``` r
-t_statistic=sqrt(n)*(p-0.25)/Sx
-t_statistic
+test_statistic=sqrt(n)*(p-0.25)/Sx
+test_statistic
 ```
 
     ## [1] -0.9020473
@@ -91,7 +91,7 @@ t_statistic
 *P-value* of the test is:
 
 ``` r
-2*pnorm(t_statistic)
+2*pnorm(test_statistic)
 ```
 
     ## [1] 0.3670318
@@ -100,16 +100,16 @@ Hence we do not reject the null hypothesis if the significance level is &lt;36%.
 
 *(Notice that standard normal distribution was used instead of t-distribution for constructing confidence intervals and testing. This is justified because our sample is large)*
 
-2. Effects on generating additional REBILLs
--------------------------------------------
+## 2. Effects on generating additional REBILLs
 
-We want to know whether *P{at least one more REBILL for a client in group 1}*, call it *P*<sub>0</sub>, is greater than *P{at least one more REBILL for a client in group 0}=* *P*<sub>1</sub>. It is easy to estimate using the fact that *P*<sub>*i*</sub> *=E\[I{at least one more REBILL for a client in group i}\]*, *i=0,1*, where *I{...}* is and indicator random variable. Let us first merge randomization data with transactions data:
+
+We want to know whether *P{at least one more REBILL for a client in group 0}*, call it *P*<sub>0</sub>, is greater than *P{at least one more REBILL for a client in group 1}=* *P*<sub>1</sub>. It is easy to estimate using the fact that *P*<sub>*i*</sub> *=E\[I{at least one more REBILL for a client in group i}\]*, *i=0,1*, where *I{...}* is and indicator random variable. Let us first merge randomization data with transactions data:
 
 ``` r
 data=inner_join(transactions, users, by="sample_id")
 ```
 
-And let us see how many distinct clients are there in each group in the transactions data:
+And let us see how many distinct clients are there in each group in the transactions data (`num_of_clients` column):
 
 ``` r
 summary_transactions=
@@ -131,7 +131,9 @@ kable(summary_transactions, format = "markdown", align='c')
 So there are 1079 clients in the control group, and 1635 clients in the test group. Now go throught the data and assign *I=0* for clients who have not generated any additional REBILLs, and *I=1* otherwise:
 
 ``` r
-data_I=data %>% group_by(sample_id) %>%
+data_I=
+  data %>%
+  group_by(sample_id) %>%
   summarise(I=ifelse(sum(transaction_type=="REBILL")>0, 1, 0)) %>%
   inner_join(users, by="sample_id")
 ```
@@ -175,24 +177,24 @@ ggplot(data.frame(i=factor(c(0,1)),
   geom_point(size=3, color="red")+geom_errorbar(aes(ymin=L, ymax=U))
 ```
 
-![](https://github.com/BBarys/test/blob/master/unnamed-chunk-14-1.png)
+![](Report_files/figure-markdown_github/unnamed-chunk-14-1.png)
 
 It seems like probabilities are statistically different because intervals do not overlap. However the graph doesn't account for variability in location of the two means. So we need to do the test, with *H*<sub>0</sub>: *P*<sub>1</sub> − *P*<sub>0</sub> ≤ 0, and *H*<sub>*a*</sub>: *P*<sub>1</sub> − *P*<sub>0</sub> &gt; 0. Compute the test statistic:
 
 ``` r
 S_delta=sqrt(S0^2/N0+S1^2/N1)
-t_statistic=(P1-P0)/S_delta
+test_statistic=(P1-P0)/S_delta
 
 # calculate P-value:
-pnorm(t_statistic, lower.tail=FALSE)
+pnorm(test_statistic, lower.tail=FALSE)
 ```
 
     ## [1] 1.965631e-12
 
 With such a small P-value we reject the null hypothesis and conclude that indeed, clients in the test group are more likely to generate at least one additional REBILL than clients in the control group.
 
-3. Effect on revenues
----------------------
+## 3. Effect on revenues
+
 
 Let us calculate the total transaction amount for each user:
 
@@ -239,7 +241,7 @@ ggplot(data.frame(i=factor(c(0,1)),
   geom_point(size=3, color="red")+geom_errorbar(aes(ymin=L, ymax=U))
 ```
 
-![](https://github.com/BBarys/test/blob/master/unnamed-chunk-18-1.png)
+![](Report_files/figure-markdown_github/unnamed-chunk-18-1.png)
 
 It seems like *R*<sub>0</sub> and *R*<sub>1</sub> are statistically different. *R*<sub>0</sub> is greater, even though *P*<sub>0</sub> was smaller, which suggests that although clients who must call in order to cancel are more likely to generate at least one additional REBILL, this "barrier" to cancellation tends to keep clients that are less "enthusiastic".
 
@@ -247,6 +249,8 @@ Test whether *R*<sub>0</sub> and *R*<sub>1</sub> are different: let *H*<sub>0</s
 
 ``` r
 revenues_distinct=revenues %>% distinct(sample_id, .keep_all = TRUE)
+
+# Vectors of revenues:
 r0=revenues_distinct %>% filter(test_group==0) %>% select(revenue) %>% unlist %>% as.vector()
 r1=revenues_distinct %>% filter(test_group==1) %>% select(revenue) %>% unlist %>% as.vector()
 t.test(r0, r1, alternative = "greater")
@@ -264,10 +268,10 @@ t.test(r0, r1, alternative = "greater")
     ## mean of x mean of y 
     ##  83.26126  58.36911
 
-P-value is very close to zero, so we reject *H*<sub>0</sub> and conclude that indeed, clients from the control group pn average generate more revenues than clients in the test group.
+P-value is very close to zero, so we reject *H*<sub>0</sub> and conclude that indeed, clients from the control group, on average, generate more revenues than clients in the test group.
 
-4. Effect on chargeback rate
-----------------------------
+## 4. Effect on chargeback rate
+
 
 Let us calculate the number of CHARGEBACKs and REBILLs for each client:
 
@@ -297,7 +301,7 @@ kable(char_rebill_summary, format = "markdown", align='c')
 |      0      | 0.0982391 | 3.481001 |     0.0282215    |
 |      1      | 0.0348624 | 1.960245 |     0.0177847    |
 
-Actually we could have used the `summary_transactions` table to compute this. But we are going to need `char_rebill` data to compute variance-covariance matrix to do hypothesis testing. Using delta method (see [here](https://en.wikipedia.org/wiki/Delta_method#Multivariate_delta_method)) with *h*(*C*<sub>*b**a**r*</sub>, *R*<sub>*b**a**r*</sub>)=*C*<sub>*b**a**r*</sub>/*R*<sub>*b**a**r*</sub> we can find an approximate normal distribution for the chargebakck rates, and then do the upper tail test for the difference in means:
+Actually we could have used the `summary_transactions` table to compute this. But we are going to need `char_rebill` data to compute variance-covariance matrix to do hypothesis testing. Using delta method (see [here](https://en.wikipedia.org/wiki/Delta_method#Multivariate_delta_method)) with *h*(*C*<sub>*b**a**r*</sub>, *R*<sub>*b**a**r*</sub>)=*C*<sub>*b**a**r*</sub>/*R*<sub>*b**a**r*</sub> we can find an approximate normal distribution for the chargeback rates, and then do the upper tail test for the difference in means:
 
 ``` r
 R_bar0=char_rebill_summary[1,3] %>% as.numeric()
@@ -312,7 +316,7 @@ C1=char_rebill %>% filter(test_group==1) %>% select(chargebacks) %>% unlist() %>
 R0=char_rebill %>% filter(test_group==0) %>% select(rebills) %>% unlist() %>% as.vector()
 R1=char_rebill %>% filter(test_group==1) %>% select(rebills) %>% unlist() %>% as.vector()
 
-# Compute variance estimates of the ratios:
+# Compute variance estimates of the ratios (formulas are found using delta method):
 Var_C0_by_R0=var(C0)/(N0*R_bar0^2)-2*cov(C0, R0)*C_bar0/(R_bar0^3)+var(R0)*C_bar0^2/(N0*R_bar0^4)
 
 Var_C1_by_R1=var(C1)/(N1*R_bar1^2)-2*cov(C1, R1)*C_bar1/(R_bar1^3)+var(R1)*C_bar1^2/(N1*R_bar1^4)
@@ -334,7 +338,7 @@ ggplot(data.frame(i=factor(c(0,1)),
   labs(title="Chargeback rate")
 ```
 
-![](https://github.com/BBarys/test/blob/master/unnamed-chunk-23-1.png)
+![](Report_files/figure-markdown_github/unnamed-chunk-23-1.png)
 
 Now do the test with *H*<sub>0</sub>: *C*<sub>0</sub>/*R*<sub>0</sub> − *C*<sub>1</sub>/*R*<sub>1</sub> ≤ 0, and *H*<sub>*a*</sub>: *C*<sub>0</sub>/*R*<sub>0</sub> − *C*<sub>1</sub>/*R*<sub>1</sub> &gt; 0:
 
