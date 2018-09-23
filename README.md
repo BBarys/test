@@ -45,7 +45,7 @@ ggplot(summary_users, aes(as.factor(test_group), size_of_group))+
   labs(x="Test group", y="Number of Clients")+guides(fill=FALSE)
 ```
 
-![](Report_files/figure-markdown_github/unnamed-chunk-4-1.png)
+![](https://github.com/BBarys/test/blob/master/unnamed-chunk-4-1.png)
 
 We assume that assignment of each client to a particular group is independent Bernoulli random variable with probability *p* of a client being assigned to the test group. We know that *p=E\[X\]*, where *X~Bernoulli(p)*. An estimator of *E\[X\]* is the sample mean of *x*<sub>*i*</sub>'s, where *x*<sub>*i*</sub> is 1 if a client *i* is in the test group, and zero otherwise. This simply reduces to the proportion of clients who were assigned to the test group:
 
@@ -177,7 +177,7 @@ ggplot(data.frame(i=factor(c(0,1)),
   geom_point(size=3, color="red")+geom_errorbar(aes(ymin=L, ymax=U))
 ```
 
-![](Report_files/figure-markdown_github/unnamed-chunk-14-1.png)
+![](https://github.com/BBarys/test/blob/master/unnamed-chunk-14-1.png)
 
 It seems like probabilities are statistically different because intervals do not overlap. However the graph doesn't account for variability in location of the two means. So we need to do the test, with *H*<sub>0</sub>: *P*<sub>1</sub> − *P*<sub>0</sub> ≤ 0, and *H*<sub>*a*</sub>: *P*<sub>1</sub> − *P*<sub>0</sub> &gt; 0. Compute the test statistic:
 
@@ -241,7 +241,7 @@ ggplot(data.frame(i=factor(c(0,1)),
   geom_point(size=3, color="red")+geom_errorbar(aes(ymin=L, ymax=U))
 ```
 
-![](Report_files/figure-markdown_github/unnamed-chunk-18-1.png)
+![](https://github.com/BBarys/test/blob/master/unnamed-chunk-18-1.png)
 
 It seems like *R*<sub>0</sub> and *R*<sub>1</sub> are statistically different. *R*<sub>0</sub> is greater, even though *P*<sub>0</sub> was smaller, which suggests that although clients who must call in order to cancel are more likely to generate at least one additional REBILL, this "barrier" to cancellation tends to keep clients that are less "enthusiastic".
 
@@ -338,7 +338,7 @@ ggplot(data.frame(i=factor(c(0,1)),
   labs(title="Chargeback rate")
 ```
 
-![](Report_files/figure-markdown_github/unnamed-chunk-23-1.png)
+![](https://github.com/BBarys/test/blob/master/unnamed-chunk-23-1.png)
 
 Now do the test with *H*<sub>0</sub>: *C*<sub>0</sub>/*R*<sub>0</sub> − *C*<sub>1</sub>/*R*<sub>1</sub> ≤ 0, and *H*<sub>*a*</sub>: *C*<sub>0</sub>/*R*<sub>0</sub> − *C*<sub>1</sub>/*R*<sub>1</sub> &gt; 0:
 
