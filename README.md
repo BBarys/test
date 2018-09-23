@@ -44,7 +44,7 @@ ggplot(summary_users, aes(as.factor(test_group), size_of_group))+
   labs(x="Test group", y="Number of Clients")+guides(fill=FALSE)
 ```
 
-![](Report_files/figure-markdown_github/unnamed-chunk-4-1.png)
+![](test/unnamed-chunk-4-1.png)
 
 We assume that assignment of each client to a particular group is independent Bernoulli random variable with probability *p* of a client being assigned to the test group. We know that *p=E\[X\]*, where *X~Bernoulli(p)*. An estimator of *E\[X\]* is the sample mean of *x*<sub>*i*</sub>'s, where *x*<sub>*i*</sub> is 1 if a client *i* is in the test group, and zero otherwise. This simply reduces to the proportion of clients who were assigned to the test group:
 
