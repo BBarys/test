@@ -172,4 +172,4 @@ ggplot(data.frame(I=factor(c(0,1)),
   geom_point(size=3, color="red")+geom_errorbar(aes(ymin=L, ymax=U))
 ```
 
-![](Report_files/figure-markdown_github/unnamed-chunk-14-1.png)
+![](test/unnamed-chunk-14-1.png)
