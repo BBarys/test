@@ -322,7 +322,7 @@ Var_C0_by_R0=var(C0)/(N0*R_bar0^2)-2*cov(C0, R0)*C_bar0/(R_bar0^3)+var(R0)*C_bar
 Var_C1_by_R1=var(C1)/(N1*R_bar1^2)-2*cov(C1, R1)*C_bar1/(R_bar1^3)+var(R1)*C_bar1^2/(N1*R_bar1^4)
 ```
 
-Now we are ready do calculate confidence intervals (*α* = 0.01) for the chargeback rates:
+Now we are ready to calculate confidence intervals (*α* = 0.01) for the chargeback rates:
 
 ``` r
 CI_0=c(C_bar0/R_bar0-qnorm(0.995)*sqrt(Var_C0_by_R0/N0),
